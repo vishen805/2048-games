@@ -2,7 +2,7 @@
 let grid;
 let score;
 let gameOver;
-let moving = false; // To track if tiles are currently moving
+let moving = false;
 
 // Initialize the game
 function initGame() {
@@ -30,13 +30,12 @@ function initGame() {
         gridElement.appendChild(cell);
     }
     
-    // Add two initial tiles immediately (without setTimeout)
+    // Add two initial tiles
     addRandomTile(true);
     addRandomTile(true);
     
     updateGrid();
 }
-
 
 // Add a random tile (2 or 4) to an empty cell
 function addRandomTile(animate = false) {
@@ -62,7 +61,7 @@ function addRandomTile(animate = false) {
     }
 }
 
-// Update the grid display with animations
+// Update the grid display
 function updateGrid() {
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
@@ -102,7 +101,7 @@ function highlightMergedTiles(newGrid, oldGrid) {
     }
 }
 
-// Move tiles left with animation
+// Move tiles left
 function moveLeft() {
     if (moving || gameOver) return false;
     moving = true;
@@ -143,7 +142,7 @@ function moveLeft() {
     return moved;
 }
 
-// Move tiles right with animation
+// Move tiles right
 function moveRight() {
     if (moving || gameOver) return false;
     moving = true;
@@ -184,7 +183,7 @@ function moveRight() {
     return moved;
 }
 
-// Move tiles up with animation
+// Move tiles up
 function moveUp() {
     if (moving || gameOver) return false;
     moving = true;
@@ -227,7 +226,7 @@ function moveUp() {
     return moved;
 }
 
-// Move tiles down with animation
+// Move tiles down
 function moveDown() {
     if (moving || gameOver) return false;
     moving = true;
@@ -272,7 +271,7 @@ function moveDown() {
 
 // Check if the game is over
 function isGameOver() {
-    // Check if there are any empty cells
+    // Check for empty cells
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             if (grid[i][j] === 0) {
@@ -281,7 +280,7 @@ function isGameOver() {
         }
     }
     
-    // Check if there are any possible merges
+    // Check for possible horizontal merges
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 3; j++) {
             if (grid[i][j] === grid[i][j + 1]) {
@@ -290,6 +289,7 @@ function isGameOver() {
         }
     }
     
+    // Check for possible vertical merges
     for (let j = 0; j < 4; j++) {
         for (let i = 0; i < 3; i++) {
             if (grid[i][j] === grid[i + 1][j]) {
@@ -334,9 +334,8 @@ function handleKeyPress(e) {
 
 function startGame() {
     const gameOverScreen = document.getElementById('game-over');
-    gameOverScreen.style.opacity = 0;
     gameOverScreen.style.display = 'none';
-    initGame(); // Call initGame directly without delay
+    initGame();
 }
 
 // Initialize the game when the page loads
