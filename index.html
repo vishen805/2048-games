@@ -7,30 +7,68 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Main Menu -->
+    <div class="main-menu" id="main-menu">
+        <div class="menu-content">
+            <h1>2048</h1>
+            <div class="high-score-display">
+                <div class="high-score-title">HIGH SCORE</div>
+                <div class="high-score-value" id="high-score-value">0</div>
+            </div>
+            <button class="menu-button" id="start-button">Start Game</button>
+            <button class="menu-button" id="how-to-play-button">How to Play</button>
+        </div>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div class="modal" id="how-to-play-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>How to Play 2048</h2>
+            <ul>
+                <li>Use arrow keys or swipe to move tiles</li>
+                <li>When two tiles with the same number touch, they merge into one!</li>
+                <li>Reach the <strong>2048 tile</strong> to win</li>
+                <li>Game ends when you can't move anymore</li>
+                <li>Try to beat your high score!</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="container" id="game-container">
         <div class="header">
             <h1>2048</h1>
             <div class="score-container">
-                <div class="score-title">SCORE</div>
-                <div class="score-value" id="score">0</div>
+                <div>
+                    <div class="score-title">SCORE</div>
+                    <div class="score-value" id="score">0</div>
+                </div>
+                <div>
+                    <div class="high-score-title">HIGH SCORE</div>
+                    <div class="high-score-value" id="current-high-score">0</div>
+                </div>
             </div>
         </div>
         
-        <div class="game-area">
-            <div class="game-container">
-                <div class="grid" id="grid"></div>
-                <div class="game-over" id="game-over">
-                    <div class="game-over-text">Game Over!</div>
-                    <button class="restart-button" onclick="startGame()">Try Again</button>
+        <div class="game-board">
+            <div class="grid" id="grid"></div>
+            <div class="game-over" id="game-over">
+                <div class="game-over-content">
+                    <h2>Game Over!</h2>
+                    <div class="final-score">Score: <span id="final-score">0</span></div>
+                    <div class="high-score">High Score: <span id="final-high-score">0</span></div>
+                    <button class="retry-button" id="retry-button">Try Again</button>
+                    <button class="menu-button" id="back-to-menu">Main Menu</button>
                 </div>
             </div>
-            
-            <div class="instructions">
-                <h3>HOW TO PLAY:</h3>
-                <p>Use your <strong>arrow keys</strong> to move the tiles.</p>
-                <p>When two tiles with the same number touch, they <strong>merge into one!</strong></p>
-                <p>Try to reach the <strong>2048 tile!</strong></p>
-            </div>
+        </div>
+        
+        <div class="mobile-controls">
+            <button class="control-button up" id="up-button">↑</button>
+            <button class="control-button left" id="left-button">←</button>
+            <button class="control-button right" id="right-button">→</button>
+            <button class="control-button down" id="down-button">↓</button>
         </div>
     </div>
 

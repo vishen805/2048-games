@@ -1,8 +1,26 @@
 // Game variables
 let grid;
 let score;
+let highScore = localStorage.getItem('2048-highScore') || 0;
 let gameOver;
 let moving = false;
+
+// DOM elements
+const mainMenu = document.getElementById('main-menu');
+const gameContainer = document.getElementById('game-container');
+const startButton = document.getElementById('start-button');
+const howToPlayButton = document.getElementById('how-to-play-button');
+const howToPlayModal = document.getElementById('how-to-play-modal');
+const closeModal = document.querySelector('.close-modal');
+const retryButton = document.getElementById('retry-button');
+const backToMenu = document.getElementById('back-to-menu');
+const highScoreElement = document.getElementById('high-score-value');
+const currentHighScoreElement = document.getElementById('current-high-score');
+const finalHighScoreElement = document.getElementById('final-high-score');
+const upButton = document.getElementById('up-button');
+const leftButton = document.getElementById('left-button');
+const rightButton = document.getElementById('right-button');
+const downButton = document.getElementById('down-button');
 
 // Initialize the game
 function initGame() {
@@ -17,7 +35,13 @@ function initGame() {
     gameOver = false;
     
     document.getElementById('score').textContent = score;
-    document.getElementById('game-over').style.display = 'none';
+    const gameOverScreen = document.getElementById('game-over');
+    gameOverScreen.style.display = 'none';
+    gameOverScreen.classList.remove('active');
+    
+    // Update high score display
+    highScoreElement.textContent = highScore;
+    currentHighScoreElement.textContent = highScore;
     
     // Create the grid cells
     const gridElement = document.getElementById('grid');
@@ -80,12 +104,42 @@ function updateGrid() {
     document.getElementById('score').textContent = score;
     
     // Check for game over
-    if (isGameOver()) {
-        setTimeout(() => {
-            gameOver = true;
-            document.getElementById('game-over').style.display = 'flex';
-        }, 300);
+    if (isGameOver() && !gameOver) {
+        showGameOver();
     }
+}
+
+// Improved game over detection
+function isGameOver() {
+    // Check if there are empty cells first (game can't be over if there are)
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (grid[i][j] === 0) {
+                return false;
+            }
+        }
+    }
+    
+    // Check for possible horizontal merges
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (grid[i][j] === grid[i][j + 1]) {
+                return false;
+            }
+        }
+    }
+    
+    // Check for possible vertical merges
+    for (let j = 0; j < 4; j++) {
+        for (let i = 0; i < 3; i++) {
+            if (grid[i][j] === grid[i + 1][j]) {
+                return false;
+            }
+        }
+    }
+    
+    // If we get here, no moves are possible
+    return true;
 }
 
 // Highlight merged tiles
@@ -137,6 +191,9 @@ function moveLeft() {
         }, 200);
     } else {
         moving = false;
+        if (isGameOver()) {
+            showGameOver();
+        }
     }
     
     return moved;
@@ -178,6 +235,9 @@ function moveRight() {
         }, 200);
     } else {
         moving = false;
+        if (isGameOver()) {
+            showGameOver();
+        }
     }
     
     return moved;
@@ -221,6 +281,9 @@ function moveUp() {
         }, 200);
     } else {
         moving = false;
+        if (isGameOver()) {
+            showGameOver();
+        }
     }
     
     return moved;
@@ -264,41 +327,12 @@ function moveDown() {
         }, 200);
     } else {
         moving = false;
+        if (isGameOver()) {
+            showGameOver();
+        }
     }
     
     return moved;
-}
-
-// Check if the game is over
-function isGameOver() {
-    // Check for empty cells
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            if (grid[i][j] === 0) {
-                return false;
-            }
-        }
-    }
-    
-    // Check for possible horizontal merges
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (grid[i][j] === grid[i][j + 1]) {
-                return false;
-            }
-        }
-    }
-    
-    // Check for possible vertical merges
-    for (let j = 0; j < 4; j++) {
-        for (let i = 0; i < 3; i++) {
-            if (grid[i][j] === grid[i + 1][j]) {
-                return false;
-            }
-        }
-    }
-    
-    return true;
 }
 
 // Helper function to compare arrays
@@ -310,36 +344,112 @@ function arraysEqual(a, b) {
     return true;
 }
 
+// Show game over screen
+function showGameOver() {
+    gameOver = true;
+    updateHighScore();
+    
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('final-high-score').textContent = highScore;
+    
+    const gameOverScreen = document.getElementById('game-over');
+    gameOverScreen.style.display = 'flex';
+    setTimeout(() => {
+        gameOverScreen.classList.add('active');
+    }, 10);
+}
+
+// Update high score
+function updateHighScore() {
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('2048-highScore', highScore);
+        currentHighScoreElement.textContent = highScore;
+        finalHighScoreElement.textContent = highScore;
+        highScoreElement.textContent = highScore;
+    }
+}
+
 // Handle keyboard input
 function handleKeyPress(e) {
     if (gameOver) return;
     
+    let moved = false;
+    
     switch (e.key) {
         case 'ArrowLeft':
-            moveLeft();
+            moved = moveLeft();
             break;
         case 'ArrowRight':
-            moveRight();
+            moved = moveRight();
             break;
         case 'ArrowUp':
-            moveUp();
+            moved = moveUp();
             break;
         case 'ArrowDown':
-            moveDown();
+            moved = moveDown();
             break;
         default:
             return; // Ignore other keys
     }
 }
 
+// Start the game
 function startGame() {
-    const gameOverScreen = document.getElementById('game-over');
-    gameOverScreen.style.display = 'none';
+    mainMenu.style.display = 'none';
+    gameContainer.style.display = 'block';
     initGame();
 }
 
+// Return to main menu
+function returnToMenu() {
+    const gameOverScreen = document.getElementById('game-over');
+    gameOverScreen.classList.remove('active');
+    setTimeout(() => {
+        gameOverScreen.style.display = 'none';
+        gameContainer.style.display = 'none';
+        mainMenu.style.display = 'flex';
+    }, 300);
+}
+
+// Event listeners
+startButton.addEventListener('click', startGame);
+howToPlayButton.addEventListener('click', () => {
+    howToPlayModal.style.display = 'flex';
+});
+closeModal.addEventListener('click', () => {
+    howToPlayModal.style.display = 'none';
+});
+retryButton.addEventListener('click', () => {
+    const gameOverScreen = document.getElementById('game-over');
+    gameOverScreen.classList.remove('active');
+    setTimeout(() => {
+        gameOverScreen.style.display = 'none';
+        initGame();
+    }, 300);
+});
+backToMenu.addEventListener('click', returnToMenu);
+
+// Mobile control event listeners
+upButton.addEventListener('click', moveUp);
+leftButton.addEventListener('click', moveLeft);
+rightButton.addEventListener('click', moveRight);
+downButton.addEventListener('click', moveDown);
+
+// Close modal when clicking outside
+window.addEventListener('click', (event) => {
+    if (event.target === howToPlayModal) {
+        howToPlayModal.style.display = 'none';
+    }
+});
+
+// Initialize high score display
+highScoreElement.textContent = highScore;
+
 // Initialize the game when the page loads
 window.onload = function() {
-    startGame();
+    // Show main menu by default
+    mainMenu.style.display = 'flex';
+    gameContainer.style.display = 'none';
     document.addEventListener('keydown', handleKeyPress);
 };
